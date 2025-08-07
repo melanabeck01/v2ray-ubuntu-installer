@@ -118,8 +118,16 @@ echo
 echo "Service status:"
 systemctl is-active v2ray && echo "✓ V2Ray is running" || echo "✗ V2Ray failed to start"
 echo
+# Generate vmess link
+VMESS_JSON="{\"v\":\"2\",\"ps\":\"V2Ray-$H\",\"add\":\"$H\",\"port\":\"8443\",\"id\":\"$U\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"\",\"path\":\"/ws\",\"tls\":\"\"}"
+VMESS_BASE64=$(echo -n "$VMESS_JSON" | base64 -w 0)
+VMESS_LINK="vmess://$VMESS_BASE64"
+
 echo "Client configuration (JSON):"
-echo "{\"v\":\"2\",\"ps\":\"V2Ray-$H\",\"add\":\"$H\",\"port\":\"8443\",\"id\":\"$U\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"\",\"path\":\"/ws\",\"tls\":\"\"}"
+echo "$VMESS_JSON"
+echo
+echo "vmess:// link for easy import:"
+echo "$VMESS_LINK"
 echo
 echo "Use this config in your V2Ray client."
 echo "============================================"
