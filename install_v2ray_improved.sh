@@ -73,16 +73,24 @@ cat > /etc/systemd/system/v2ray.service << EOF
 [Unit]
 Description=V2Ray Service
 Documentation=https://www.v2fly.org/
-After=network.target nss-lookup.target
+After=network.target network-online.target nss-lookup.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
 
 [Service]
+Type=simple
 User=nobody
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 NoNewPrivileges=true
 ExecStart=/usr/local/bin/v2ray run -config /etc/v2ray/config.json
-Restart=on-failure
+ExecReload=/bin/kill -HUP \$MAINPID
+Restart=always
+RestartSec=5
 RestartPreventExitStatus=23
+KillMode=mixed
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target
@@ -117,6 +125,7 @@ echo "Security: none"
 echo
 echo "Service status:"
 systemctl is-active v2ray && echo "✓ V2Ray is running" || echo "✗ V2Ray failed to start"
+systemctl is-enabled v2ray && echo "✓ Autostart enabled" || echo "✗ Autostart disabled"
 echo
 # Generate vmess link
 VMESS_JSON="{\"v\":\"2\",\"ps\":\"V2Ray-$H\",\"add\":\"$H\",\"port\":\"8443\",\"id\":\"$U\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"\",\"path\":\"/ws\",\"tls\":\"\"}"

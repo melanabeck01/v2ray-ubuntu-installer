@@ -2,6 +2,7 @@
 echo "V2Ray Installation Check"
 echo "========================"
 echo "Service status: $(systemctl is-active v2ray 2>/dev/null || echo 'not installed')"
+echo "Autostart: $(systemctl is-enabled v2ray 2>/dev/null || echo 'not configured')"
 echo "Process: $(pgrep v2ray >/dev/null && echo 'running' || echo 'not running')"
 echo "Port 8443: $(netstat -ln 2>/dev/null | grep :8443 >/dev/null && echo 'listening' || echo 'not listening')"
 echo "Config file: $(test -f /etc/v2ray/config.json && echo 'exists' || echo 'missing')"
